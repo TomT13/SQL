@@ -1,0 +1,22 @@
+-- Min Date is 1753-01-01
+
+-- Convert date format to YYYY-MM-DD
+Convert (varchar(10), Column1, 126)
+
+--  126	(2006-12-30)
+--  102 (2006.12.30)
+
+-- To diplay column names from particular table:
+
+Select column_name
+from INFORMATION_SCHEMA.COLUMNS
+where TABLE_NAME = 'Table1'
+
+-- Search Column like
+
+Select * from INFORMATION_SCHEMA.COLUMNS
+where COLUMN_NAME like '%Misc%'
+
+
+-- Running Total
+SUM (StudentAge) OVER (PARTITION BY StudentGender ORDER BY Id) AS RunningAgeTotal

@@ -1,7 +1,0 @@
--- Min Date is 1753-01-01
-
--- Convert date format to YYYY-MM-DD
-Convert (varchar(10), Column1, 126)
-
---  126	(2006-12-30)
---  102 (2006.12.30)
