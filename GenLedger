@@ -1,0 +1,40 @@
+-- General Ledger script gets all GL codes, P&L monhtly and Balance Sheet cumulative. Also gets all GL codes from previous FY cumulatively. 
+
+declare @start as varchar(100)  
+declare @finish as varchar(100)
+declare @year as varchar(100)
+set @start = 202112	
+set @finish = 202212
+set @year = 2022
+
+
+select 
+	Branch as BRANCH,
+	Department as DEPARTMENT,
+	Account as ACCOUNT,
+	Concat(Branch,Department,Account) as AccountName,
+	Description,
+case when CLASS in ('A', 'L')  then concat(table1.BRANCH,'Bal')
+	   when CLASS in ('E', 'R')  then concat(table1.BRANCH,'PnL')
+	   else null end as LedgerName,
+case when cast(Period as varchar) = @start then concat(@start,' YTD')
+     else cast(Period as varchar) end as Period,
+case when Department between cast(10 as varchar) and cast(90 as varchar) and left(Period,4) = @year 			then SUM(YDebit - YCredit)   
+	   when Department NOT between cast(10 as varchar) and cast(90 as varchar) and left(Period,4) = @year		then SUM(Debit - Credit)  
+	   when Period = @start																					                                        then SUM(YDebit - YCredit)
+	   else null end as Value
+from table2
+	left join table1 on table1.BRANCH = table2.Branch
+	and table1.DEPARTMENT = table2.Department
+	and table1.ACCOUNT = table2.Account
+where Period between @start and @finish and
+	RIGHT(Period, 2) Not in (00,99)	
+group BY
+Branch,
+Department,
+Account,
+Description,
+Period,
+table1.CLASS,
+table1.BRANCH
+order by Period
